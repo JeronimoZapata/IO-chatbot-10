@@ -1,6 +1,6 @@
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import { BaseMessage } from '@langchain/core/messages';
-import { RunnableLike } from '@langchain/core/runnables';
+import { Runnable } from '@langchain/core/runnables';
 
 const AgentState = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
@@ -9,7 +9,7 @@ const AgentState = Annotation.Root({
   }),
 });
 
-export const createAgentGraph = (model: RunnableLike<BaseMessage[], BaseMessage>) => {
+export const createAgentGraph = (model: Runnable<BaseMessage[], BaseMessage>) => {
   const graph = new StateGraph(AgentState)
     .addNode('simulationTutorAgent', async (state: typeof AgentState.State) => {
       const response = await model.invoke(state.messages);
