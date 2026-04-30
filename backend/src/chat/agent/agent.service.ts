@@ -37,15 +37,25 @@ export class AgentService {
     const model = this.modelProviderService.getChatModel();
     const graph = createAgentGraph(model);
 
-    const inputMessages: BaseMessage[] = [new SystemMessage(SYSTEM_PROMPT)];
+    const systemParts: string[] = [SYSTEM_PROMPT];
     if (this.knowledgeBaseContent) {
-      inputMessages.push(
-        new SystemMessage(
-          `Base de conocimiento:\n\n${this.knowledgeBaseContent}`,
-        ),
-      );
+      systemParts.push(`Base de conocimiento:\n\n${this.knowledgeBaseContent}`);
     }
-    inputMessages.push(...messages.map((message) => this.toBaseMessage(message)));
+
+    const nonSystemMessages: BaseMessage[] = [];
+    for (const message of messages) {
+      if (message.role === 'system') {
+        systemParts.push(message.content);
+        continue;
+      }
+
+      nonSystemMessages.push(this.toBaseMessage(message));
+    }
+
+    const inputMessages: BaseMessage[] = [
+      new SystemMessage(systemParts.join('\n\n')),
+      ...nonSystemMessages,
+    ];
 
     try {
       const result = await graph.invoke({ messages: inputMessages });
@@ -61,11 +71,21 @@ export class AgentService {
       return JSON.stringify(lastMessage.content);
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message, error.stack);
+      } else {
+        this.logger.error('Unknown error while invoking AI provider.', error as any);
+      }
+
+      if (error instanceof Error) {
         if (
           error.message.includes('AI_PROVIDER is required') ||
           error.message.includes('OPENAI_API_KEY') ||
           error.message.includes('Unsupported AI provider')
         ) {
+          throw new InternalServerErrorException(error.message);
+        }
+
+        if (error.message.trim()) {
           throw new InternalServerErrorException(error.message);
         }
       }
