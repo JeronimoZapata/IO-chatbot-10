@@ -1,10 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import {
   AIMessage,
   BaseMessage,
   HumanMessage,
   SystemMessage,
 } from '@langchain/core/messages';
+import * as fs from 'fs';
+import * as path from 'path';
 import { createAgentGraph } from './agent.graph';
 import { ModelProviderService } from './model-provider.service';
 import { AgentMessage } from './types/agent-message.type';
@@ -12,18 +14,38 @@ import { AgentMessage } from './types/agent-message.type';
 const SYSTEM_PROMPT =
   'Eres un asistente especializado en modelos de simulacion. Tu tarea es ayudar a interpretar, plantear y resolver ejercicios academicos de simulacion de manera clara, paso a paso y con explicacion. Cuando falten datos, debes pedirlos antes de avanzar. No inventes informacion numerica.';
 
+const DEFAULT_KNOWLEDGE_BASE_PATH = path.resolve(
+  process.cwd(),
+  'knowledge-base.md',
+);
+const FALLBACK_KNOWLEDGE_BASE_PATH = path.resolve(
+  process.cwd(),
+  '..',
+  'knowledge-base.md',
+);
+
 @Injectable()
 export class AgentService {
-  constructor(private readonly modelProviderService: ModelProviderService) {}
+  private readonly logger = new Logger(AgentService.name);
+  private readonly knowledgeBaseContent: string;
+
+  constructor(private readonly modelProviderService: ModelProviderService) {
+    this.knowledgeBaseContent = this.loadKnowledgeBase();
+  }
 
   async run(messages: AgentMessage[]): Promise<string> {
     const model = this.modelProviderService.getChatModel();
     const graph = createAgentGraph(model);
 
-    const inputMessages: BaseMessage[] = [
-      new SystemMessage(SYSTEM_PROMPT),
-      ...messages.map((message) => this.toBaseMessage(message)),
-    ];
+    const inputMessages: BaseMessage[] = [new SystemMessage(SYSTEM_PROMPT)];
+    if (this.knowledgeBaseContent) {
+      inputMessages.push(
+        new SystemMessage(
+          `Base de conocimiento:\n\n${this.knowledgeBaseContent}`,
+        ),
+      );
+    }
+    inputMessages.push(...messages.map((message) => this.toBaseMessage(message)));
 
     try {
       const result = await graph.invoke({ messages: inputMessages });
@@ -62,5 +84,31 @@ export class AgentService {
       default:
         return new HumanMessage(message.content);
     }
+  }
+
+  private loadKnowledgeBase(): string {
+    const configuredPath = process.env.KNOWLEDGE_BASE_PATH;
+    const candidatePaths = [
+      configuredPath,
+      DEFAULT_KNOWLEDGE_BASE_PATH,
+      FALLBACK_KNOWLEDGE_BASE_PATH,
+    ].filter((value): value is string => Boolean(value));
+
+    for (const candidatePath of candidatePaths) {
+      if (!fs.existsSync(candidatePath)) {
+        continue;
+      }
+
+      try {
+        return fs.readFileSync(candidatePath, 'utf8').trim();
+      } catch (error) {
+        this.logger.warn(
+          `Failed to read knowledge base at ${candidatePath}.`,
+        );
+      }
+    }
+
+    this.logger.warn('Knowledge base file was not found or could not be read.');
+    return '';
   }
 }
