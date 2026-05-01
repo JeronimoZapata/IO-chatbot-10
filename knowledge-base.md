@@ -15,24 +15,60 @@
 **Respuesta del chatbot:** Datos completos. Espero aceptacion para ejecutar el modelo matematico.
 
 **Pregunta del usuario:** Empezar
-**Respuesta del chatbot:** Reporte de Politica de Inventario
-1. Tamano del Lote Optimo Q
-Calculado mediante la formula de Cantidad Economica de Pedido para minimizar los costos de preparacion y retencion:
-Q* = raiz 2 * D * K / c1
-Calculo: raiz 2 * 6 * 18 / 0.14 = 39.28
-Decision: Pedir 39 unidades.
+**Respuesta del chatbot:**
 
-2. Nivel de Servicio Optimo y Stock de Seguridad
-La probabilidad admisible de tener faltantes, optimizada segun tus costos c1 y c2, se define por:
-P x > R = Q * c1 / D * c2
-Calculo: 39 * 0.14 / 6 * 3.60 = 0.2527
-Esto implica aceptar un riesgo de faltante del 25.27% durante el tiempo de espera Nivel de servicio optimo de 74.73%. Buscando en la tabla normal, esto corresponde a un valor Z ≈ 0.67.
+---
 
-3. Punto de Reorden R
-Considerando la demanda esperada durante el lead time mu_L = 24 unidades y el factor Z:
-R = mu_L + Z * sigma_L
-Calculo: 24 + 0.67 * 5 = 27.35
-Decision: Fijar el punto de reorden en 28 unidades.
+## Reporte de Politica de Inventario
 
-Plan de Accion Recomendado:
-Configurar el sistema interno para emitir una orden de compra por 39 microcontroladores cada vez que el stock fisico caiga a 28 unidades.
+### 1. Tamano del Lote Optimo (Q)
+Se calcula con la Cantidad Economica de Pedido (EOQ):
+
+$$
+Q^* = \sqrt{\frac{2 \cdot D \cdot K}{c1}}
+$$
+
+- **Calculo:**
+	$$
+	\sqrt{\frac{2 \cdot 6 \cdot 18}{0.14}} = \sqrt{1542.857} \approx 39.28
+	$$
+- **Decision:** pedir **39 unidades**.
+
+### 2. Nivel de servicio optimo y stock de seguridad
+Probabilidad admisible de faltantes:
+
+$$
+P(x > R) = \frac{Q \cdot c1}{D \cdot c2}
+$$
+
+- **Calculo:**
+	$$
+	\frac{39 \cdot 0.14}{6 \cdot 3.60} = 0.2527
+	$$
+- **Riesgo de faltante:** 25.27%
+- **Nivel de servicio optimo:** $1 - 0.2527 = 0.7473$ (74.73%)
+- **Valor Z aproximado:** 0.67
+
+### 3. Punto de Reorden (R)
+Demanda esperada durante el lead time:
+
+$$
+\mu_L = D \cdot L = 6 \cdot 4 = 24
+$$
+
+Punto de reorden:
+
+$$
+R = \mu_L + Z \cdot \sigma_L
+$$
+
+- **Calculo:**
+	$$
+	24 + 0.67 \cdot 5 = 27.35
+	$$
+- **Decision:** fijar **28 unidades**.
+
+---
+
+### Plan de accion recomendado
+Configura el sistema para emitir una orden de compra por **39 microcontroladores** cuando el stock fisico baje a **28 unidades**.
