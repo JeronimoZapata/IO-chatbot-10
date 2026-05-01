@@ -51,8 +51,8 @@ const path = __importStar(require("path"));
 const agent_graph_1 = require("./agent.graph");
 const model_provider_service_1 = require("./model-provider.service");
 const SYSTEM_PROMPT = 'Eres un asistente especializado en modelos de simulacion. Tu tarea es ayudar a interpretar, plantear y resolver ejercicios academicos de simulacion de manera clara, paso a paso y con explicacion. Cuando falten datos, debes pedirlos antes de avanzar. No inventes informacion numerica.';
-const DEFAULT_KNOWLEDGE_BASE_PATH = path.resolve(process.cwd(), 'knowledge-base.md');
-const FALLBACK_KNOWLEDGE_BASE_PATH = path.resolve(process.cwd(), '..', 'knowledge-base.md');
+const DEFAULT_KNOWLEDGE_BASE_PATH = path.resolve(process.cwd(), 'model-context.md');
+const FALLBACK_KNOWLEDGE_BASE_PATH = path.resolve(process.cwd(), '..', 'model-context.md');
 let AgentService = AgentService_1 = class AgentService {
     modelProviderService;
     logger = new common_1.Logger(AgentService_1.name);

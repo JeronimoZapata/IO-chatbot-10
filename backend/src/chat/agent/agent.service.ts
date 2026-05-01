@@ -16,12 +16,12 @@ const SYSTEM_PROMPT =
 
 const DEFAULT_KNOWLEDGE_BASE_PATH = path.resolve(
   process.cwd(),
-  'knowledge-base.md',
+  'model-context.md',
 );
 const FALLBACK_KNOWLEDGE_BASE_PATH = path.resolve(
   process.cwd(),
   '..',
-  'knowledge-base.md',
+  'model-context.md',
 );
 
 @Injectable()
