@@ -1,143 +1,209 @@
+/* ── Root ─────────────────────────────────────────────── */
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+  min-height: 100vh;
+  background: #f4f4f2;
   display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  padding: 40px 20px;
+  box-sizing: border-box;
+  font-family: var(--font-geist-sans, system-ui, sans-serif);
 }
 
-.main {
-  display: flex;
-  flex: 1;
+/* ── Card ─────────────────────────────────────────────── */
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e4e4e0;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+  max-width: 720px;
   width: 100%;
-  max-width: 1500px;
-  min-height: 75vh;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 180px 100px;
+  overflow: hidden;
 }
 
-.intro {
+/* ── Header band ─────────────────────────────────────── */
+.headerBand {
+  background: #1e1e1e;
+  padding: 36px 48px 28px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+  gap: 4px;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
+.university {
+  font-size: 0.78rem;
   font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0a09a;
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
-
-.intro a {
+.faculty {
+  font-size: 1.05rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: #d0d0ca;
+  margin-top: 2px;
 }
 
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+.subject {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin-top: 10px;
+  line-height: 1.2;
 }
 
-.ctas a {
+.career {
+  font-size: 0.88rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* ── Body ─────────────────────────────────────────────── */
+.body {
+  padding: 36px 48px 40px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Group tag ─────────────────────────────────────────── */
+.groupTag {
+  display: inline-flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
+  gap: 8px;
+  background: #f0f0ec;
+  border: 1px solid #e0e0da;
+  border-radius: 8px;
+  padding: 7px 14px;
   width: fit-content;
+}
+
+.groupName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.groupNumber {
+  font-size: 0.82rem;
+  color: #888;
+  font-weight: 400;
+}
+
+/* ── Sections ─────────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #aaa;
+}
+
+/* ── People lists ─────────────────────────────────────── */
+.peopleList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.person {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #2a2a2a;
+}
+
+.personDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c0c0bb;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.personLegajo {
+  font-size: 0.8rem;
+  color: #999;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+/* ── Divider ─────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid #ebebea;
+  margin: 0;
+}
+
+/* ── Footer row ──────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.year {
+  font-size: 0.88rem;
+  color: #aaa;
   font-weight: 500;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
+/* ── CTA button ─────────────────────────────────────── */
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
+  background: #1e1e1e;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.ctaButton:hover {
+  background: #333;
+  transform: translateY(-1px);
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.ctaArrow {
+  font-size: 1.1rem;
+  transition: transform 0.15s ease;
 }
 
+.ctaButton:hover .ctaArrow {
+  transform: translateX(3px);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
 @media (max-width: 600px) {
-  .main {
-    padding: 64px 24px;
+  .headerBand {
+    padding: 28px 28px 22px;
   }
 
-  .intro {
-    gap: 16px;
+  .subject {
+    font-size: 1.35rem;
   }
 
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+  .body {
+    padding: 28px 28px 32px;
   }
 
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  .personLegajo {
+    display: none;
   }
 }
