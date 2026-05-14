@@ -1,13 +1,16 @@
 FROM node:20-alpine
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --include=dev
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/
+RUN pnpm install --frozen-lockfile --filter backend
 
-COPY . .
-RUN node ./node_modules/@nestjs/cli/bin/nest.js build
+COPY backend/ ./backend/
+RUN pnpm --filter backend build
 
 EXPOSE 3001
 
-CMD ["node", "dist/main"]
+CMD ["node", "backend/dist/main"]
