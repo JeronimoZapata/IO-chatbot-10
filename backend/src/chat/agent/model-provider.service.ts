@@ -24,12 +24,12 @@ export class ModelProviderService {
           throw new Error('OPENAI_API_KEY is required when AI_PROVIDER=openai');
         }
 
-        const { ChatOpenAI } = await import('@langchain/openai');
-        return new ChatOpenAI({
-          apiKey,
-          model,
-          temperature,
-        });
+        //const { ChatOpenAI } = await import('@langchain/openai');
+        //return new ChatOpenAI({
+        //  apiKey,
+        //  model,
+        //  temperature,
+        //});
       }
       case 'gemini': {
         const apiKey = this.configService.get<string>('GOOGLE_API_KEY');
