@@ -34,7 +34,7 @@ export class AgentService {
   }
 
   async run(messages: AgentMessage[]): Promise<string> {
-    const model = this.modelProviderService.getChatModel();
+    const model = await this.modelProviderService.getChatModel();
     const graph = createAgentGraph(model);
 
     const systemParts: string[] = [SYSTEM_PROMPT];

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ChatOpenAI } from '@langchain/openai';
+import type { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 
 @Injectable()
 export class ModelProviderService {
   constructor(private readonly configService: ConfigService) {}
 
-  getChatModel() {
+  async getChatModel(): Promise<ChatOpenAI | ChatGoogleGenerativeAI> {
     const rawProvider = this.configService.get<string>('AI_PROVIDER');
     if (!rawProvider) {
       throw new Error('AI_PROVIDER is required.');
@@ -24,6 +24,7 @@ export class ModelProviderService {
           throw new Error('OPENAI_API_KEY is required when AI_PROVIDER=openai');
         }
 
+        const { ChatOpenAI } = await import('@langchain/openai');
         return new ChatOpenAI({
           apiKey,
           model,
