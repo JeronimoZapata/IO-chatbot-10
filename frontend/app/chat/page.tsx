@@ -114,7 +114,11 @@ function relativeTime(ts: number): string {
 
 export default function ChatPage() {
   const apiUrl = useMemo(
-    () => process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001",
+    () =>
+      process.env.NEXT_PUBLIC_API_URL ??
+      (process.env.NODE_ENV === "production"
+        ? "/_/backend"
+        : "http://localhost:3001"),
     []
   );
 
