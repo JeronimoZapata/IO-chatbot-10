@@ -1,8 +1,4 @@
 {
   "name": "io-chatbot-10",
-  "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ]
+  "private": true
 }
