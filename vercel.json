@@ -1,4 +1,5 @@
 {
+    "installCommand": "pnpm install --shamefully-hoist",
     "experimentalServices": {
         "frontend": {
             "entrypoint": "frontend",
