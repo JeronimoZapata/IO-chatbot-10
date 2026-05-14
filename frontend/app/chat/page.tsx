@@ -276,7 +276,7 @@ export default function ChatPage() {
         <section className={styles.chatColumn}>
           <div className={styles.chatCard}>
             <header className={styles.header}>
-              <h1>Chat con el agente</h1>
+              <h1>Chatbot agéntico </h1>
               <p>Consultas sobre modelos de inventario en tiempo real.</p>
             </header>
 
