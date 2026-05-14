@@ -14,6 +14,7 @@ pnpm-debug.log*
 /dist/
 /build/
 /.next/
+backend/dist/
 out/
 coverage/
 
