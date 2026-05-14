@@ -1,14 +1,21 @@
 {
-    "installCommand": "pnpm install --shamefully-hoist",
-    "experimentalServices": {
-        "frontend": {
-            "entrypoint": "frontend",
-            "routePrefix": "/",
-            "framework": "nextjs"
+    "builds": [
+        {
+            "src": "frontend/package.json",
+            "use": "@vercel/next"
         },
-        "backend": {
-            "entrypoint": "backend",
-            "routePrefix": "/_/backend"
+        {
+            "src": "backend/src/vercel-handler.ts",
+            "use": "@vercel/node",
+            "config": {
+                "maxDuration": 30
+            }
         }
-    }
+    ],
+    "routes": [
+        {
+            "src": "/_/backend/(.*)",
+            "dest": "backend/src/vercel-handler.ts"
+        }
+    ]
 }
