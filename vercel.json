@@ -16,6 +16,10 @@
         {
             "src": "/_/backend/(.*)",
             "dest": "backend/src/vercel-handler.ts"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "frontend/$1"
         }
     ]
 }
