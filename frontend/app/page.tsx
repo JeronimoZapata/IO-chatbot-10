@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import ThemeToggle from "./components/ThemeToggle";
 
 const PROFESSORS = [
   "Dra. Claudia Screpnik",
@@ -71,10 +72,13 @@ export default function Home() {
           {/* Footer */}
           <div className={styles.footer}>
             <span className={styles.year}>Ciclo lectivo 2026</span>
-            <Link href="/chat" className={styles.ctaButton}>
-              Abrir asistente
-              <span className={styles.ctaArrow}>→</span>
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <ThemeToggle />
+              <Link href="/chat" className={styles.ctaButton}>
+                Abrir asistente
+                <span className={styles.ctaArrow}>→</span>
+              </Link>
+            </div>
           </div>
 
         </div>

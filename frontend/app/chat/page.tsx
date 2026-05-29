@@ -8,6 +8,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import styles from "./page.module.css";
+import ThemeToggle from "../components/ThemeToggle";
 
 // ── Types ─────────────────────────────────────────────────
 
@@ -344,15 +345,18 @@ export default function ChatPage() {
                   <h1>Chatbot agéntico</h1>
                   <p>Consultas sobre modelos de inventario en tiempo real.</p>
                 </div>
-                {messages.length > 0 && (
-                  <button
-                    type="button"
-                    className={styles.exportButton}
-                    onClick={exportPDF}
-                  >
-                    Exportar PDF
-                  </button>
-                )}
+                <div className={styles.headerActions}>
+                  {messages.length > 0 && (
+                    <button
+                      type="button"
+                      className={styles.exportButton}
+                      onClick={exportPDF}
+                    >
+                      Exportar PDF
+                    </button>
+                  )}
+                  <ThemeToggle />
+                </div>
               </div>
             </header>
 

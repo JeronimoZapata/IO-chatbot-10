@@ -1,3 +1,99 @@
+:root {
+  /* Backgrounds */
+  --bg:             #f7f7f5;
+  --surface:        #ffffff;
+  --surface-subtle: #f8f8f6;
+  --hover:          #f4f4f2;
+  --active:         #efefec;
+  --inset:          #f0f0ec;
+  --disabled:       #f2f2ef;
+  --code-bg:        rgba(0, 0, 0, 0.07);
+
+  /* Text */
+  --text:    #1a1a1a;
+  --text-2:  #555555;
+  --text-3:  #777777;
+  --text-4:  #999999;
+  --text-5:  #aaaaaa;
+  --heading: #111111;
+
+  /* Borders */
+  --border:         #e6e6e2;
+  --border-subtle:  #ebebea;
+  --border-input:   #d7d7d2;
+  --border-message: #deded8;
+  --border-chat:    #e2e2dd;
+  --border-card:    #e4e4e0;
+  --border-tag:     #e0e0da;
+
+  /* Accent */
+  --accent:       #1e1e1e;
+  --accent-fg:    #ffffff;
+  --accent-hover: #333333;
+
+  /* Landing header band (always dark) */
+  --band-bg:         #1e1e1e;
+  --band-university: #a0a09a;
+  --band-faculty:    #d0d0ca;
+  --band-subject:    #ffffff;
+  --band-career:     #888888;
+
+  /* Misc */
+  --error:          #b3261e;
+  --error-bg:       rgba(179, 38, 30, 0.08);
+  --scrollbar:      #d4d4d0;
+  --table-border:   #d8d8d4;
+  --table-head-bg:  #f2f2ef;
+  --shadow:         0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.05);
+  --shadow-xl:      0 20px 60px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] {
+  --bg:             #111110;
+  --surface:        #1c1c1a;
+  --surface-subtle: #161614;
+  --hover:          #252522;
+  --active:         #2a2a27;
+  --inset:          #252522;
+  --disabled:       #252522;
+  --code-bg:        rgba(255, 255, 255, 0.08);
+
+  --text:    #e8e8e4;
+  --text-2:  #999999;
+  --text-3:  #888888;
+  --text-4:  #666666;
+  --text-5:  #4a4a46;
+  --heading: #f0f0ec;
+
+  --border:         #2e2e2a;
+  --border-subtle:  #262622;
+  --border-input:   #3a3a36;
+  --border-message: #38383a;
+  --border-chat:    #2a2a26;
+  --border-card:    #2e2e2a;
+  --border-tag:     #38383a;
+
+  --accent:       #e8e8e4;
+  --accent-fg:    #111110;
+  --accent-hover: #d0d0cc;
+
+  --band-bg:         #242420;
+  --band-university: #a0a09a;
+  --band-faculty:    #c8c8c2;
+  --band-subject:    #f0f0ec;
+  --band-career:     #888888;
+
+  --error:          #f28b82;
+  --error-bg:       rgba(242, 139, 130, 0.12);
+  --scrollbar:      #3a3a36;
+  --table-border:   #3a3a36;
+  --table-head-bg:  #252522;
+  --shadow:         0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-xl:      0 20px 60px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -6,23 +102,8 @@
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #f7f7f5;
-  color: #1a1a1a;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
-}
-
-.page {
-  padding: 48px 32px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.page h1 {
-  font-size: 2.25rem;
-  margin-bottom: 12px;
-}
-
-.page p {
-  font-size: 1.1rem;
-  color: #4a4a4a;
+  transition: background 0.2s ease, color 0.2s ease;
 }

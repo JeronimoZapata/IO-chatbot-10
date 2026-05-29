@@ -1,7 +1,7 @@
 /* ── Root ─────────────────────────────────────────────── */
 .page {
   min-height: 100vh;
-  background: #f4f4f2;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,10 +12,10 @@
 
 /* ── Card ─────────────────────────────────────────────── */
 .card {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 24px;
-  border: 1px solid #e4e4e0;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-xl);
   max-width: 720px;
   width: 100%;
   overflow: hidden;
@@ -23,7 +23,7 @@
 
 /* ── Header band ─────────────────────────────────────── */
 .headerBand {
-  background: #1e1e1e;
+  background: var(--band-bg);
   padding: 36px 48px 28px;
   display: flex;
   flex-direction: column;
@@ -35,20 +35,20 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #a0a09a;
+  color: var(--band-university);
 }
 
 .faculty {
   font-size: 1.05rem;
   font-weight: 500;
-  color: #d0d0ca;
+  color: var(--band-faculty);
   margin-top: 2px;
 }
 
 .subject {
   font-size: 1.7rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--band-subject);
   letter-spacing: -0.5px;
   margin-top: 10px;
   line-height: 1.2;
@@ -56,7 +56,7 @@
 
 .career {
   font-size: 0.88rem;
-  color: #888;
+  color: var(--band-career);
   margin-top: 4px;
 }
 
@@ -73,8 +73,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #f0f0ec;
-  border: 1px solid #e0e0da;
+  background: var(--inset);
+  border: 1px solid var(--border-tag);
   border-radius: 8px;
   padding: 7px 14px;
   width: fit-content;
@@ -83,12 +83,12 @@
 .groupName {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .groupNumber {
   font-size: 0.82rem;
-  color: #888;
+  color: var(--text-4);
   font-weight: 400;
 }
 
@@ -104,7 +104,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #aaa;
+  color: var(--text-5);
 }
 
 /* ── People lists ─────────────────────────────────────── */
@@ -119,21 +119,21 @@
   align-items: baseline;
   gap: 8px;
   font-size: 0.95rem;
-  color: #2a2a2a;
+  color: var(--text);
 }
 
 .personDot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #c0c0bb;
+  background: var(--border-message);
   flex-shrink: 0;
   margin-bottom: 2px;
 }
 
 .personLegajo {
   font-size: 0.8rem;
-  color: #999;
+  color: var(--text-4);
   font-variant-numeric: tabular-nums;
   margin-left: auto;
 }
@@ -141,7 +141,7 @@
 /* ── Divider ─────────────────────────────────────────── */
 .divider {
   border: none;
-  border-top: 1px solid #ebebea;
+  border-top: 1px solid var(--border-subtle);
   margin: 0;
 }
 
@@ -156,7 +156,7 @@
 
 .year {
   font-size: 0.88rem;
-  color: #aaa;
+  color: var(--text-5);
   font-weight: 500;
 }
 
@@ -165,8 +165,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #1e1e1e;
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--accent-fg);
   border-radius: 12px;
   padding: 12px 24px;
   font-size: 0.95rem;
@@ -176,7 +176,7 @@
 }
 
 .ctaButton:hover {
-  background: #333;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
