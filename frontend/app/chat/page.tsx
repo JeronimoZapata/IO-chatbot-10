@@ -88,10 +88,8 @@ function upsertConversation(
     ? convs.map((c) => (c.id === updated.id ? updated : c))
     : [updated, ...convs];
 
-  // Sort by most recent first
   next = next.sort((a, b) => b.updatedAt - a.updatedAt);
 
-  // Cap at max
   if (next.length > MAX_CONVERSATIONS) {
     next = next.slice(0, MAX_CONVERSATIONS);
   }
@@ -128,19 +126,36 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Load history from localStorage on mount
   useEffect(() => {
     const stored = loadConversations();
     setConversations(stored);
   }, []);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [input]);
+
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim()) return conversations;
+    const q = searchQuery.toLowerCase();
+    return conversations.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) ||
+        c.messages.some((m) => m.content.toLowerCase().includes(q))
+    );
+  }, [conversations, searchQuery]);
 
   const persistConversation = useCallback(
     (id: string, msgs: ChatMessage[]) => {
@@ -163,6 +178,27 @@ export default function ChatPage() {
     []
   );
 
+  const deleteConversation = useCallback(
+    (id: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setConversations((prev) => {
+        const next = prev.filter((c) => c.id !== id);
+        saveConversations(next);
+        return next;
+      });
+      if (activeId === id) {
+        setActiveId(null);
+        setMessages([]);
+        setError(null);
+      }
+    },
+    [activeId]
+  );
+
+  const exportPDF = useCallback(() => {
+    window.print();
+  }, []);
+
   const sendMessage = async () => {
     const content = input.trim();
     if (!content || isLoading) return;
@@ -176,7 +212,6 @@ export default function ChatPage() {
     setInput("");
     setIsLoading(true);
 
-    // Determine or create the active conversation id
     let currentId = activeId;
     if (!currentId) {
       currentId = generateId();
@@ -235,6 +270,8 @@ export default function ChatPage() {
     setError(null);
   };
 
+  const activeConversation = conversations.find((c) => c.id === activeId);
+
   return (
     <main className={styles.page}>
       <div className={styles.grid}>
@@ -251,26 +288,48 @@ export default function ChatPage() {
             </button>
           </div>
 
+          <div className={styles.searchWrapper}>
+            <input
+              className={styles.searchInput}
+              type="text"
+              placeholder="Buscar…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
           <div className={styles.sidebarList}>
-            {conversations.length === 0 ? (
+            {filteredConversations.length === 0 ? (
               <p className={styles.sidebarEmpty}>
-                Aún no hay conversaciones guardadas.
+                {searchQuery ? "Sin resultados." : "Aún no hay conversaciones guardadas."}
               </p>
             ) : (
-              conversations.map((conv) => (
-                <button
+              filteredConversations.map((conv) => (
+                <div
                   key={conv.id}
-                  type="button"
                   className={`${styles.conversationItem} ${
                     conv.id === activeId ? styles.active : ""
                   }`}
-                  onClick={() => loadConversation(conv)}
                 >
-                  <span className={styles.conversationTitle}>{conv.title}</span>
-                  <span className={styles.conversationTime}>
-                    {relativeTime(conv.updatedAt)}
-                  </span>
-                </button>
+                  <button
+                    type="button"
+                    className={styles.conversationBody}
+                    onClick={() => loadConversation(conv)}
+                  >
+                    <span className={styles.conversationTitle}>{conv.title}</span>
+                    <span className={styles.conversationTime}>
+                      {relativeTime(conv.updatedAt)}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    onClick={(e) => deleteConversation(conv.id, e)}
+                    title="Eliminar conversación"
+                  >
+                    ×
+                  </button>
+                </div>
               ))
             )}
           </div>
@@ -280,9 +339,29 @@ export default function ChatPage() {
         <section className={styles.chatColumn}>
           <div className={styles.chatCard}>
             <header className={styles.header}>
-              <h1>Chatbot agéntico </h1>
-              <p>Consultas sobre modelos de inventario en tiempo real.</p>
+              <div className={styles.headerTop}>
+                <div>
+                  <h1>Chatbot agéntico</h1>
+                  <p>Consultas sobre modelos de inventario en tiempo real.</p>
+                </div>
+                {messages.length > 0 && (
+                  <button
+                    type="button"
+                    className={styles.exportButton}
+                    onClick={exportPDF}
+                  >
+                    Exportar PDF
+                  </button>
+                )}
+              </div>
             </header>
+
+            {/* Print-only title */}
+            {activeConversation && (
+              <div className={styles.printTitle}>
+                <strong>{activeConversation.title}</strong>
+              </div>
+            )}
 
             <div className={styles.chatWindow} ref={scrollRef}>
               {messages.length === 0 ? (
@@ -324,8 +403,8 @@ export default function ChatPage() {
 
             <div className={styles.inputRow}>
               <textarea
+                ref={textareaRef}
                 className={styles.input}
-                rows={2}
                 placeholder="Escribe tu mensaje…"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

@@ -60,6 +60,34 @@
   background: #333;
 }
 
+.searchWrapper {
+  padding: 8px 10px 4px;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d7d7d2;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.83rem;
+  font-family: inherit;
+  background: #f8f8f6;
+  color: #1a1a1a;
+  transition: border-color 0.15s ease;
+}
+
+.searchInput::placeholder {
+  color: #aaa;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #999;
+  background: #fff;
+}
+
 .sidebarList {
   flex: 1;
   overflow-y: auto;
@@ -82,26 +110,42 @@
 
 .conversationItem {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 9px 10px;
+  align-items: center;
+  gap: 4px;
   border-radius: 10px;
-  cursor: pointer;
   border: 1px solid transparent;
   transition: background 0.12s ease, border-color 0.12s ease;
-  text-align: left;
   background: transparent;
   width: 100%;
+  overflow: hidden;
 }
 
 .conversationItem:hover {
   background: #f4f4f2;
 }
 
+.conversationItem:hover .deleteButton {
+  opacity: 1;
+}
+
 .conversationItem.active {
   background: #efefec;
   border-color: #deded8;
   border-left: 3px solid #1e1e1e;
+}
+
+.conversationBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 6px 9px 10px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .conversationTitle {
@@ -117,6 +161,25 @@
 .conversationTime {
   font-size: 0.73rem;
   color: #999;
+}
+
+.deleteButton {
+  flex-shrink: 0;
+  opacity: 0;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px 4px 4px;
+  border-radius: 6px;
+  transition: opacity 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+
+.deleteButton:hover {
+  color: #b3261e;
+  background: rgba(179, 38, 30, 0.08);
 }
 
 .sidebarEmpty {
@@ -153,6 +216,13 @@
   margin-bottom: 4px;
 }
 
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .header h1 {
   font-size: 1.5rem;
   margin-bottom: 4px;
@@ -162,6 +232,33 @@
 .header p {
   color: #777;
   font-size: 0.92rem;
+}
+
+.exportButton {
+  flex-shrink: 0;
+  border: 1px solid #d7d7d2;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: #fff;
+  color: #444;
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.exportButton:hover {
+  background: #f4f4f2;
+  border-color: #bbb;
+}
+
+.printTitle {
+  display: none;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: #333;
 }
 
 /* ── Chat window ────────────────────────────────────────── */
@@ -385,6 +482,9 @@
   line-height: 1.5;
   font-family: inherit;
   transition: border-color 0.15s ease;
+  min-height: 52px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .input:focus {
@@ -408,7 +508,8 @@
   cursor: pointer;
   transition: background 0.15s ease;
   white-space: nowrap;
-  height: 42px;
+  min-height: 42px;
+  align-self: flex-end;
 }
 
 .sendButton:hover:not(:disabled) {
@@ -425,6 +526,96 @@
   color: #b3261e;
   font-size: 0.9rem;
   margin-top: 4px;
+}
+
+/* ── Print ──────────────────────────────────────────────── */
+
+@media print {
+  .page {
+    padding: 0;
+    background: #fff;
+    min-height: unset;
+  }
+
+  .grid {
+    display: block;
+    height: auto;
+    max-height: none;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .chatColumn {
+    display: block;
+    min-height: unset;
+  }
+
+  .chatCard {
+    display: block;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+    overflow: visible;
+    height: auto;
+    max-height: none;
+    min-height: unset;
+  }
+
+  .header p,
+  .exportButton {
+    display: none;
+  }
+
+  .printTitle {
+    display: block;
+  }
+
+  .chatWindow {
+    display: block;
+    border: none;
+    background: #fff;
+    overflow: visible;
+    height: auto;
+    max-height: none;
+    min-height: unset;
+    flex: none;
+    margin: 8px 0;
+  }
+
+  .messageList {
+    display: block;
+  }
+
+  .message {
+    break-inside: avoid;
+    margin-bottom: 10px;
+  }
+
+  .inputRow,
+  .emptyState,
+  .error {
+    display: none;
+  }
+
+  .userMessage {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    max-width: 80%;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    float: right;
+    clear: both;
+  }
+
+  .assistantMessage {
+    max-width: 96%;
+    box-shadow: none;
+    float: left;
+    clear: both;
+  }
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
