@@ -12,7 +12,7 @@ import { ModelProviderService } from './model-provider.service';
 import { AgentMessage } from './types/agent-message.type';
 
 const SYSTEM_PROMPT =
-  'Eres un asistente especializado en modelos de simulacion. Tu tarea es ayudar a interpretar, plantear y resolver ejercicios academicos de simulacion de manera clara, paso a paso y con explicacion. Cuando falten datos, debes pedirlos antes de avanzar. No inventes informacion numerica.';
+  'Eres un asistente especializado en modelos de inventario probabilisticos. Tu tarea es ayudar a interpretar, plantear y resolver problemas de inventario de manera clara, paso a paso y con explicacion. Cuando falten datos, debes pedirlos antes de avanzar. No inventes informacion numerica.';
 
 const DEFAULT_KNOWLEDGE_BASE_PATH = path.resolve(
   process.cwd(),

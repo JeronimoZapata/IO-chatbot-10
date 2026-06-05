@@ -348,6 +348,8 @@ Calcular el lote inicial con EOQ:
 
 `Q₀ = √[(2 · K · D) / c₁]`
 
+**Cálculo progresivo:** `Q₀` es el primer resultado intermedio del modelo y puede mostrarse al usuario apenas se tengan `D`, `K` y `c₁`, junto con los valores de cada iteración posterior. A diferencia del modelo de un solo período y de la revisión periódica por costos, en `(Q, R)` **no** existe un nivel de servicio óptimo calculable solo con los costos antes de iterar: el `z` óptimo surge de `1 − Φ(z) = (Q · c₁)/(D · c₂)` (sección 12.1) y depende de `Q` y `D`. Por lo tanto, el agente no debe prometer ni adelantar un nivel de servicio óptimo hasta haber ejecutado el algoritmo iterativo (ver sección 17.0.1).
+
 ---
 
 ### Paso 1: cálculo de `z`
@@ -514,6 +516,18 @@ Existen dos caminos válidos para obtener `z` (y por lo tanto `SS` y `R`):
 - **Vía costos (z óptimo):** si el usuario quiere el `z` que minimiza el costo total, se calcula con el algoritmo iterativo de la sección 13, que **sí requiere** `D`, `K`, `c₁`, `c₂` (y produce además `Q`).
 
 El agente debe elegir la vía según los datos que el usuario ya dio o según lo que pida. Si tiene `α`/`z`, usa la vía directa; si pide explícitamente el óptimo por costos, usa la vía de costos.
+
+---
+
+### 17.0.1. Cálculo progresivo (feedback intermedio)
+
+Si con los datos que el usuario **ya** proporcionó puede calcularse algún resultado intermedio del modelo (relación crítica, nivel de servicio óptimo, EOQ inicial de Wilson, etc.), el agente debe **calcularlo y mostrarlo de inmediato como feedback intermedio**, interpretarlo brevemente, y recién **después** pedir los datos que faltan para el resultado final. El agente **no debe retener un cálculo que ya está disponible** solo porque falten otros datos para una métrica posterior.
+
+Resultados intermedios disponibles según el modelo:
+
+- **Modelo de un solo período (Newsvendor / s-S):** apenas se tengan `p` y `h`, calcular y mostrar la relación crítica `RC = p / (p + h)` (el nivel de servicio óptimo), antes de solicitar la distribución de la demanda necesaria para `y*` (ver sección 23.5.1).
+- **Revisión por períodos (T, S) por la vía de costos:** apenas se tengan `p` y `h`, calcular y mostrar el nivel de servicio `α ≈ p / (p + h)` (y el `z` asociado), antes de pedir `T`, `L` y los parámetros de la demanda (ver sección 24.4.2).
+- **Revisión continua (Q, R):** el feedback intermedio disponible es el lote inicial de Wilson `Q₀ = √[(2·K·D)/c₁]` (Paso 0, sección 13) y los valores de cada iteración del algoritmo. **No** existe un "nivel de servicio óptimo" calculable solo con los costos antes de iterar, porque `z` depende de `Q` y `D` (sección 12.1); el agente no debe prometer ni adelantar un nivel de servicio óptimo en este modelo hasta haber ejecutado el algoritmo iterativo.
 
 ---
 
@@ -704,9 +718,11 @@ La cantidad óptima `y*` cumple:
 
 `P{D ≤ y*} = p / (p + h)`
 
-La expresión `p / (p + h)` se denomina **relación crítica** (critical ratio).
+La expresión `p / (p + h)` se denomina **relación crítica** (critical ratio) y representa el **nivel de servicio óptimo** del modelo.
 
 Interpretación: conviene pedir más unidades mientras la probabilidad de que la demanda no supere `y*` sea menor que la relación crítica.
+
+**Cálculo progresivo (importante):** la relación crítica `RC = p / (p + h)` es **independiente de la distribución de la demanda**: solo necesita los costos `p` y `h`. Por lo tanto, en cuanto el usuario haya proporcionado `p` y `h`, el agente debe **calcular y mostrar de inmediato la relación crítica** (interpretándola como el nivel de servicio óptimo) y **recién después** solicitar la distribución de la demanda necesaria para obtener `y*`. No debe esperar a tener la demanda para comunicar este valor (ver principio general en sección 17.0.1).
 
 #### 23.5.2. Procedimiento para demanda continua
 
@@ -795,20 +811,22 @@ El agente debe seguir estos pasos en orden:
 
 3. **Preguntar si existe costo fijo `K`** y bifurcar según la respuesta.
 
-4. **Solicitar información de la demanda**:
+4. **Calcular y comunicar la relación crítica de inmediato**: en cuanto se tengan `p` y `h` (paso 2), calcular `RC = p / (p + h)` y mostrarla como nivel de servicio óptimo, con su interpretación, **antes** de pedir la distribución de la demanda. No retener este cálculo a la espera de otros datos (ver secciones 17.0.1 y 23.5.1).
+
+5. **Solicitar información de la demanda**:
    - ¿La demanda es continua (se puede modelar con distribución normal, uniforme, etc.) o discreta (tabla de valores con probabilidades)?
    - Si continua: pedir parámetros de la distribución (media μ, desviación estándar σ para normal; límites a y b para uniforme; etc.).
    - Si discreta: pedir la tabla con valores de `D` y sus probabilidades `f(D)`.
 
-5. **Solicitar inventario actual `x`** para dar recomendación operativa.
+6. **Solicitar inventario actual `x`** para dar recomendación operativa.
 
-6. **Calcular y presentar resultados**:
-   - Relación crítica `RC`.
+7. **Calcular y presentar resultados**:
+   - Relación crítica `RC` (ya comunicada en el paso 4; reafirmarla aquí).
    - `y*` (o `S` en política s-S).
    - `s` (solo en política s-S).
    - Recomendación operativa: pedir o no pedir, y cuánto.
 
-7. **Ofrecer comparativas**: cambiar `h`, `p`, `K` o parámetros de demanda para analizar escenarios alternativos.
+8. **Ofrecer comparativas**: cambiar `h`, `p`, `K` o parámetros de demanda para analizar escenarios alternativos.
 
 ---
 
@@ -842,6 +860,10 @@ Cuando el usuario solicita una resolución completa, el agente debe responder co
 ---
 
 ### 23.10. Ejemplos de respuestas tipo
+
+**Ejemplo — feedback intermedio al recibir solo los costos `p` y `h`:**
+
+> Con p = 45 y h = 25, la relación crítica (nivel de servicio óptimo) es RC = 45 / (45 + 25) = 0,643. Esto significa que conviene cubrir aproximadamente el 64,3% de la demanda. Para calcular la cantidad óptima a pedir `y*` necesito ahora la distribución de la demanda: ¿es normal, uniforme o discreta, y con qué parámetros?
 
 **Ejemplo — demanda continua normal, sin K:**
 
@@ -947,6 +969,8 @@ Si se conocen los costos de almacenamiento `h` y escasez `p`, la relación crít
 
 Luego `z = Φ⁻¹(α)`.
 
+**Cálculo progresivo:** este `α` (y su `z`) depende **solo** de los costos `p` y `h`, no de `T`, `L` ni de la demanda. Por lo tanto, si el usuario optó por la vía de costos, el agente debe **calcular y mostrar de inmediato** `α = p / (p + h)` y el `z` correspondiente como feedback intermedio, **antes** de solicitar `T`, `L` y los parámetros de la demanda (ver principio general en sección 17.0.1).
+
 Nota conceptual: en la revisión periódica, el período de revisión `T` es fijo (no se optimiza), por lo que el costo fijo de pedido `K` no influye en el cálculo del nivel objetivo `S`. El rol de `K` sería determinar si conviene cambiar la frecuencia de revisión, lo cual está fuera del alcance de este modelo.
 
 Si el usuario no conoce ni `α` ni los costos, el agente debe guiarlo para estimarlos o proponer un valor de referencia (ej. α = 95% es un estándar habitual).
@@ -996,7 +1020,7 @@ El agente debe seguir estos pasos en orden:
 
 5. **Solicitar nivel de servicio `α`** o costos `h` y `p` para derivarlo:
    - Si provee `α`: usar directamente.
-   - Si provee `h` y `p`: calcular `α = p/(p+h)`.
+   - Si provee `h` y `p`: calcular `α = p/(p+h)` y **comunicarlo de inmediato** (con su `z`) como feedback intermedio, antes de continuar pidiendo el resto de los datos (ver sección 24.4.2).
    - Si no puede proveer ninguno: proponer α = 95% como referencia y consultar si acepta.
 
 6. **Solicitar el inventario físico actual** y los **pedidos en tránsito** para calcular `IP` y la cantidad a pedir `q`.
