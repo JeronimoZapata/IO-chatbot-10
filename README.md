@@ -70,8 +70,8 @@ Ejemplo de `backend/.env`:
 
 ```env
 AI_PROVIDER=gemini
-AI_MODEL=gemini-1.5-flash
-AI_TEMPERATURE=0.2
+AI_MODEL=gemini-2.5-flash
+AI_TEMPERATURE=0
 GOOGLE_API_KEY=tu_api_key_de_google_aqui
 OPENAI_API_KEY=
 PORT=3001
@@ -82,8 +82,8 @@ PORT=3001
 | Variable | Descripción | Ejemplo |
 |---|---|---|
 | `AI_PROVIDER` | Proveedor de IA (operativo: `gemini`). | `gemini` |
-| `AI_MODEL` | Modelo a utilizar. | `gemini-1.5-flash` |
-| `AI_TEMPERATURE` | Temperatura del modelo (0 = determinista). | `0.2` |
+| `AI_MODEL` | Modelo a utilizar. | `gemini-2.5-flash` |
+| `AI_TEMPERATURE` | Temperatura del modelo. Recomendado `0` (determinista) por tratarse de tareas de cálculo. | `0` |
 | `GOOGLE_API_KEY` | API key de Google Gemini. **Requerida.** | `AIza...` |
 | `OPENAI_API_KEY` | API key de OpenAI (no requerida con Gemini). | |
 | `PORT` | Puerto del backend. | `3001` |

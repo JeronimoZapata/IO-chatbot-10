@@ -53,12 +53,12 @@ export class ModelProviderService {
 
   private parseTemperature(value: string | undefined): number {
     if (!value) {
-      return 0.2;
+      return 0;
     }
 
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) {
-      return 0.2;
+      return 0;
     }
 
     return parsed;
