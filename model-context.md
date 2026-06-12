@@ -360,6 +360,8 @@ Con el valor actual de `Q`, calcular:
 
 Luego obtener `z` usando la inversa de la normal estándar.
 
+**Importante:** este paso (y por lo tanto el bucle iterativo y el dato `c₂`) **solo** es necesario cuando el usuario quiere el `z` **óptimo por costos** o el lote `Q`. Si el usuario **ya fijó un nivel de servicio `α` (o un `z`)**, ese `z` se usa **directamente** para calcular `R = μ + z · σ` y `SS = z · σ` (vía directa, secciones 17.0/17.0.2): esas dos métricas **no requieren el algoritmo iterativo ni `c₂`**. El agente no debe asumir que "revisión continua" implica siempre ejecutar el algoritmo iterativo ni exigir `c₂` para entregar `R` y `SS`.
+
 ---
 
 ### Paso 2: cálculo de `R`
@@ -531,6 +533,35 @@ Resultados intermedios disponibles según el modelo:
 
 ---
 
+### 17.0.2. Pedidos mixtos (varias métricas a la vez)
+
+Cuando el usuario pide **más de una métrica en el mismo mensaje** (por ejemplo "calculá el **tamaño de pedido y el punto de reorden**") o solicita una "resolución" sin especificar la vía, el agente **no debe** tratar el pedido como una única "resolución completa por costos" que exija todos los parámetros. Debe **descomponer el pedido métrica por métrica** y resolver cada una con el mínimo de datos de la tabla de la sección 7.2.
+
+Regla central: **entregar de inmediato todas las métricas que ya sean calculables y pedir datos solo para las que falten.** El agente **no debe retener ni bloquear** una métrica ya calculable porque falte un dato que solo es necesario para **otra** métrica del mismo pedido.
+
+En particular, en el modelo `(Q, R)`:
+
+- Si el usuario aportó un **nivel de servicio `α` (o un `z`)** junto con `μ` y `σ`, entonces `R = μ + z · σ` y `SS = z · σ` se calculan **por la vía directa** (sección 17.0) y deben **entregarse de inmediato**, **aunque falte `c₂`** (u otros costos) para el lote óptimo `Q`.
+- El costo de escasez `c₂` (y `D`, `K`, `c₁`) **solo** se necesita para `Q` y para el `z` óptimo por costos; **nunca** debe condicionar la entrega de `R` ni de `SS` cuando ya hay `α`/`z`.
+- Tras entregar lo calculable, **ofrecer de forma opcional** completar el lote óptimo `Q` y el costo total, pidiendo únicamente los datos que falten para esas métricas (típicamente `c₂`).
+
+**Plantilla de respuesta esperada** (ej. tipo del pedido "tamaño de pedido y punto de reorden" con `α`, `μ` y `σ` dados, pero sin `c₂`):
+
+> Tu pedido incluye dos métricas; resuelvo primero las que ya son calculables con los datos que diste.
+>
+> Antes de calcular, confirmo que `μ` y `σ` estén expresadas en la **misma unidad de tiempo del lead time** (si la demanda y la desviación vienen en unidades distintas, las convierto a la del plazo de entrega).
+>
+> Con el nivel de servicio `α`, obtengo `z = Φ⁻¹(α)` (ver tabla de la sección 24.4.1). Entonces:
+>
+> - **Punto de reorden:** `R = μ + z · σ` ≈ … unidades.
+> - **Stock de seguridad:** `SS = z · σ` ≈ … unidades.
+>
+> Esto significa emitir un pedido cuando el inventario baje a `R`. Si querés, también puedo calcular el **lote óptimo `Q`** (y el costo total); para eso me falta el **costo de escasez `c₂`** (ya tengo `D`, `K` y `c₁`).
+
+El agente debe **resolver los `…` con los valores reales** del usuario; los placeholders solo indican el formato.
+
+---
+
 ### 17.1. Stock de seguridad aislado
 
 Fórmula: `SS = z · σ`.
@@ -564,6 +595,8 @@ Fórmula: `R = μ + z · σ`.
 El lote óptimo `Q` sí depende de los costos. El agente debe responder:
 
 > Para calcular la cantidad óptima a pedir `Q` necesito conocer `D`, `K`, `c₁` y `c₂` (y, para el punto de reorden asociado, también `μ` y `σ`). Si no tenés todos los datos, podemos estimarlos paso a paso.
+
+**Si `Q` se pide junto con `R` o `SS`** y el usuario ya dio `α` (o `z`), `μ` y `σ`, el agente debe **primero entregar `R` y `SS`** por la vía directa (secciones 17.0.2, 17.1 y 17.2) y **recién después** pedir los costos faltantes para `Q`. Nunca debe condicionar toda la respuesta a `c₂` cuando `R` y `SS` ya son calculables.
 
 ---
 

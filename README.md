@@ -23,7 +23,7 @@ Monorepo gestionado con **pnpm workspaces** ([`pnpm-workspace.yaml`](pnpm-worksp
 | Paquete | Stack | Descripción |
 |---|---|---|
 | [`backend/`](backend/) | NestJS 11 + LangChain / LangGraph | API REST. Endpoints `POST /chat` y `GET /health`. |
-| [`frontend/`](frontend/) | Next.js 16 + React 19 | UI de chat con render de Markdown + KaTeX e historial en `localStorage`. |
+| [`frontend/`](frontend/) | Next.js 15 + React 19 | UI de chat con render de Markdown + KaTeX e historial en `localStorage`. |
 
 **Flujo del backend:**
 
