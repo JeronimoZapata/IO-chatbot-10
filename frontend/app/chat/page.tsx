@@ -43,6 +43,27 @@ const STORAGE_KEY = "io_chat_history";
 const MAX_CONVERSATIONS = 20;
 const TITLE_MAX_LENGTH = 42;
 
+// Sugerencias del estado inicial: una por cada modelo soportado. Los prompts
+// están redactados en lenguaje natural para que el agente arranque su propio
+// flujo de clasificación (model-context.md §4.2–4.3), no para saltarlo.
+const SUGGESTIONS = [
+  {
+    label: "Revisión continua (Q, R)",
+    prompt:
+      "Quiero resolver un problema de inventario de revisión continua (modelo Q, R).",
+  },
+  {
+    label: "Un solo período (Newsvendor)",
+    prompt:
+      "Tengo un producto de vida útil corta y necesito decidir cuánto pedir una sola vez.",
+  },
+  {
+    label: "Revisión por períodos (T, S)",
+    prompt:
+      "Reviso mi inventario en intervalos fijos y quiero resolver un modelo de revisión por períodos (T, S).",
+  },
+] as const;
+
 // ── Helpers ───────────────────────────────────────────────
 
 function generateId(): string {
@@ -200,8 +221,8 @@ export default function ChatPage() {
     window.print();
   }, []);
 
-  const sendMessage = async () => {
-    const content = input.trim();
+  const sendMessage = async (text?: string) => {
+    const content = (text ?? input).trim();
     if (!content || isLoading) return;
 
     setError(null);
@@ -255,6 +276,10 @@ export default function ChatPage() {
       event.preventDefault();
       void sendMessage();
     }
+  };
+
+  const handleSuggestion = (text: string) => {
+    void sendMessage(text);
   };
 
   const startNewConversation = () => {
@@ -370,7 +395,27 @@ export default function ChatPage() {
             <div className={styles.chatWindow} ref={scrollRef}>
               {messages.length === 0 ? (
                 <div className={styles.emptyState}>
-                  <p>Iniciá la conversación con el agente.</p>
+                  <p className={styles.welcomeTitle}>
+                    Soy un asistente especializado en modelos de inventario
+                    probabilísticos. Puedo ayudarte a plantear, resolver e
+                    interpretar estos modelos:
+                  </p>
+                  <div className={styles.suggestions}>
+                    {SUGGESTIONS.map((s) => (
+                      <button
+                        key={s.label}
+                        type="button"
+                        className={styles.suggestionChip}
+                        onClick={() => handleSuggestion(s.prompt)}
+                        disabled={isLoading}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className={styles.welcomeHint}>
+                    Elegí un punto de partida o escribí tu consulta.
+                  </p>
                 </div>
               ) : (
                 <div className={styles.messageList}>

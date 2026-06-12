@@ -451,12 +451,58 @@
 .emptyState {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 16px;
   color: var(--text-5);
   font-size: 0.9rem;
   text-align: center;
   padding: 24px;
+}
+
+.welcomeTitle {
+  max-width: 520px;
+  color: var(--text-3);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.welcomeHint {
+  color: var(--text-5);
+  font-size: 0.85rem;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.suggestionChip {
+  border: 1px solid var(--border-input);
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.suggestionChip:hover:not(:disabled) {
+  background: var(--hover);
+  border-color: var(--text-4);
+}
+
+.suggestionChip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ── Input row ──────────────────────────────────────────── */
