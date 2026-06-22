@@ -590,6 +590,22 @@ Fórmula: `R = μ + z · σ`.
 
 ---
 
+### 17.2.1. Visualización del punto de reorden
+
+Cuando el agente calcule un punto de reorden `R`, debe dejar explícitos en la respuesta los tres valores necesarios para graficar la campana normal:
+
+- `μ`: demanda esperada durante el lead time.
+- `σ`: desviación estándar durante el lead time.
+- `R`: punto de reorden calculado.
+
+Formato recomendado:
+
+> Datos para visualizar: `μ = ...`, `σ = ...`, `R = ...`.
+
+El frontend puede usar esos datos para mostrar una campana de Gauss con el punto de reorden marcado. Si falta alguno de esos valores, el agente no debe inventarlo: debe pedir el dato faltante.
+
+---
+
 ### 17.3. Cantidad a pedir / lote óptimo ("¿Cuánto tengo que pedir?")
 
 El lote óptimo `Q` sí depende de los costos. El agente debe responder:

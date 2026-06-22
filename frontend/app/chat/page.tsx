@@ -37,6 +37,12 @@ type ChatResponse = {
   reply: string;
 };
 
+type InventoryChartData = {
+  mean: number;
+  standardDeviation: number;
+  reorderPoint: number;
+};
+
 // ── Constants ─────────────────────────────────────────────
 
 const STORAGE_KEY = "io_chat_history";
@@ -132,6 +138,164 @@ function relativeTime(ts: number): string {
 
 // ── Component ─────────────────────────────────────────────
 
+function parseDecimal(value: string | undefined): number | null {
+  if (!value) return null;
+  const parsed = Number(value.replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function findNumberAfterLabel(content: string, labelPattern: string): number | null {
+  const match = content.match(
+    new RegExp(`${labelPattern}[^\\n\\d-]*(-?\\d+(?:[,.]\\d+)?)`, "i")
+  );
+  return parseDecimal(match?.[1]);
+}
+
+function findLastNumberOnLine(content: string, linePattern: RegExp): number | null {
+  const line = content
+    .split(/\r?\n/)
+    .find((candidate) => linePattern.test(candidate));
+
+  if (!line) return null;
+
+  const matches = [...line.matchAll(/-?\d+(?:[,.]\d+)?/g)];
+  return parseDecimal(matches.at(-1)?.[0]);
+}
+
+function parseInventoryChartData(content: string): InventoryChartData | null {
+  const compact = content.replace(/\*\*/g, "").replace(/`/g, "");
+  const formulaMatch = compact.match(
+    /R\s*=\s*(?:μ|mu)\s*\+\s*z\s*[·*x×]\s*(?:σ|sigma)\s*=\s*(-?\d+(?:[,.]\d+)?)\s*\+\s*(-?\d+(?:[,.]\d+)?)\s*[·*x×]\s*(-?\d+(?:[,.]\d+)?)/i
+  );
+
+  const mean =
+    findNumberAfterLabel(compact, "(?:μ|mu|media|demanda esperada)") ??
+    parseDecimal(formulaMatch?.[1]);
+  const standardDeviation =
+    findNumberAfterLabel(compact, "(?:σ|sigma|desviaci[oó]n est[aá]ndar)") ??
+    parseDecimal(formulaMatch?.[3]);
+  const reorderPoint =
+    findLastNumberOnLine(compact, /(?:\bR\b|punto de reorden)/i) ??
+    findNumberAfterLabel(compact, "(?:punto de reorden|\\bR\\b)");
+
+  if (
+    mean === null ||
+    standardDeviation === null ||
+    reorderPoint === null ||
+    standardDeviation <= 0
+  ) {
+    return null;
+  }
+
+  return { mean, standardDeviation, reorderPoint };
+}
+
+function InventoryNormalChart({ data }: { data: InventoryChartData }) {
+  const width = 560;
+  const height = 220;
+  const padding = { top: 22, right: 28, bottom: 42, left: 42 };
+  const xMin = Math.min(
+    data.mean - 4 * data.standardDeviation,
+    data.reorderPoint - data.standardDeviation
+  );
+  const xMax = Math.max(
+    data.mean + 4 * data.standardDeviation,
+    data.reorderPoint + data.standardDeviation
+  );
+  const domain = xMax - xMin;
+  const peak = 1 / (data.standardDeviation * Math.sqrt(2 * Math.PI));
+
+  const xToSvg = (x: number) =>
+    padding.left +
+    ((x - xMin) / domain) * (width - padding.left - padding.right);
+  const yToSvg = (y: number) =>
+    padding.top + (1 - y / peak) * (height - padding.top - padding.bottom);
+  const density = (x: number) =>
+    (1 / (data.standardDeviation * Math.sqrt(2 * Math.PI))) *
+    Math.exp(-0.5 * ((x - data.mean) / data.standardDeviation) ** 2);
+
+  const points = Array.from({ length: 96 }, (_, index) => {
+    const x = xMin + (domain * index) / 95;
+    return { x, y: density(x) };
+  });
+  const curvePath = points
+    .map(
+      (point, index) =>
+        `${index === 0 ? "M" : "L"} ${xToSvg(point.x)} ${yToSvg(point.y)}`
+    )
+    .join(" ");
+  const shadedPoints = points.filter((point) => point.x >= data.reorderPoint);
+  const baselineY = height - padding.bottom;
+  const shadedPath =
+    shadedPoints.length > 1
+      ? [
+          `M ${xToSvg(shadedPoints[0].x)} ${baselineY}`,
+          ...shadedPoints.map(
+            (point) => `L ${xToSvg(point.x)} ${yToSvg(point.y)}`
+          ),
+          `L ${xToSvg(shadedPoints[shadedPoints.length - 1].x)} ${baselineY}`,
+          "Z",
+        ].join(" ")
+      : "";
+  const meanX = xToSvg(data.mean);
+  const reorderX = xToSvg(data.reorderPoint);
+
+  return (
+    <figure className={styles.normalChart}>
+      <figcaption>Campana de demanda durante el lead time</figcaption>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label="Distribución normal con punto de reorden marcado"
+      >
+        <line
+          className={styles.chartAxis}
+          x1={padding.left}
+          y1={baselineY}
+          x2={width - padding.right}
+          y2={baselineY}
+        />
+        {shadedPath && <path className={styles.chartShade} d={shadedPath} />}
+        <path className={styles.chartCurve} d={curvePath} />
+        <line
+          className={styles.chartMean}
+          x1={meanX}
+          y1={padding.top}
+          x2={meanX}
+          y2={baselineY}
+        />
+        <line
+          className={styles.chartReorder}
+          x1={reorderX}
+          y1={padding.top}
+          x2={reorderX}
+          y2={baselineY}
+        />
+        <text
+          className={styles.chartLabel}
+          x={meanX}
+          y={height - 16}
+          textAnchor="middle"
+        >
+          μ = {data.mean.toFixed(2)}
+        </text>
+        <text
+          className={styles.chartLabelStrong}
+          x={reorderX}
+          y={padding.top + 12}
+          textAnchor={reorderX > width - 120 ? "end" : "start"}
+        >
+          R = {data.reorderPoint.toFixed(2)}
+        </text>
+      </svg>
+      <p>
+        La zona sombreada representa la probabilidad de que la demanda supere el
+        punto de reorden.
+      </p>
+    </figure>
+  );
+}
+
 export default function ChatPage() {
   const apiUrl = useMemo(
     () =>
@@ -153,8 +317,11 @@ export default function ChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    const stored = loadConversations();
-    setConversations(stored);
+    const timeoutId = window.setTimeout(() => {
+      setConversations(loadConversations());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
@@ -435,6 +602,13 @@ export default function ChatPage() {
                         >
                           {message.content}
                         </ReactMarkdown>
+                        {message.role === "assistant" &&
+                          (() => {
+                            const chartData = parseInventoryChartData(message.content);
+                            return chartData ? (
+                              <InventoryNormalChart data={chartData} />
+                            ) : null;
+                          })()}
                       </div>
                     </div>
                   ))}

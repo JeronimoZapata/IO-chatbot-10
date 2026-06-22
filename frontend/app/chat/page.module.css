@@ -427,6 +427,72 @@
 
 /* ── Message variants ───────────────────────────────────── */
 
+.normalChart {
+  margin: 10px 0 2px;
+  padding: 12px;
+  border: 1px solid var(--border-message);
+  border-radius: 10px;
+  background: var(--surface-subtle);
+}
+
+.normalChart figcaption {
+  margin-bottom: 6px;
+  color: var(--text-2);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.normalChart svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+.normalChart p {
+  margin-top: 6px;
+  color: var(--text-4);
+  font-size: 0.82rem;
+}
+
+.chartAxis {
+  stroke: var(--text-5);
+  stroke-width: 1;
+}
+
+.chartCurve {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.chartShade {
+  fill: var(--accent);
+  opacity: 0.18;
+}
+
+.chartMean {
+  stroke: var(--text-4);
+  stroke-dasharray: 5 5;
+  stroke-width: 1.5;
+}
+
+.chartReorder {
+  stroke: var(--error);
+  stroke-width: 2.5;
+}
+
+.chartLabel,
+.chartLabelStrong {
+  fill: var(--text-3);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chartLabelStrong {
+  fill: var(--error);
+}
+
 .userMessage {
   align-self: flex-end;
   max-width: 72%;

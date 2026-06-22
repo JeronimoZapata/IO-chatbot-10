@@ -80,6 +80,7 @@ export class AgentService {
         if (
           error.message.includes('AI_PROVIDER is required') ||
           error.message.includes('OPENAI_API_KEY') ||
+          error.message.includes('GOOGLE_API_KEY') ||
           error.message.includes('Unsupported AI provider')
         ) {
           throw new InternalServerErrorException(error.message);

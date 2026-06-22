@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatOpenAI } from '@langchain/openai';
 
 @Injectable()
 export class ModelProviderService {
@@ -24,12 +25,11 @@ export class ModelProviderService {
           throw new Error('OPENAI_API_KEY is required when AI_PROVIDER=openai');
         }
 
-        //const { ChatOpenAI } = await import('@langchain/openai');
-        //return new ChatOpenAI({
-        //  apiKey,
-        //  model,
-        //  temperature,
-        //});
+        return new ChatOpenAI({
+          apiKey,
+          model,
+          temperature,
+        });
       }
       case 'gemini': {
         const apiKey = this.configService.get<string>('GOOGLE_API_KEY');
