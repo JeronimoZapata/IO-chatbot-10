@@ -119,11 +119,18 @@ El frontend apunta por defecto a `http://localhost:3001`. Se puede sobreescribir
 ### Con Docker
 
 ```bash
-docker compose up
+docker compose up --build
 ```
 
-Levanta el backend en el puerto `3001` y monta [`model-context.md`](model-context.md) como solo
-lectura ([`docker-compose.yml`](docker-compose.yml)). Requiere `backend/.env` configurado.
+Levanta **backend y frontend** con un solo comando ([`docker-compose.yml`](docker-compose.yml)):
+
+- **frontend** en http://localhost:3000 (chat en `/chat`),
+- **backend** en http://localhost:3001, con [`model-context.md`](model-context.md) montado como solo
+  lectura.
+
+Requiere `backend/.env` configurado. El frontend se construye apuntando a `http://localhost:3001`
+(la llamada a la API la hace el navegador); si necesitás otra URL, ajustá el build arg
+`NEXT_PUBLIC_API_URL` del servicio `frontend` en [`docker-compose.yml`](docker-compose.yml).
 
 ---
 
