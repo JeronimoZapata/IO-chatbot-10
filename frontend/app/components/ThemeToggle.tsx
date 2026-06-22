@@ -8,12 +8,16 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = saved ? saved === "dark" : prefersDark;
-    setDark(isDark);
-    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+    const timeoutId = window.setTimeout(() => {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDark = saved ? saved === "dark" : prefersDark;
+      setDark(isDark);
+      setMounted(true);
+      document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const toggle = () => {

@@ -35,11 +35,9 @@ Monorepo gestionado con **pnpm workspaces** ([`pnpm-workspace.yaml`](pnpm-worksp
 4. [`model-provider.service.ts`](backend/src/chat/agent/model-provider.service.ts) instancia el modelo
    según las variables de entorno.
 
-> **Nota sobre el proveedor de IA:** hoy el provider operativo es **Google Gemini**. En
-> [`model-provider.service.ts`](backend/src/chat/agent/model-provider.service.ts) el caso `openai`
-> tiene la instanciación comentada y cae al caso `gemini`, por lo que en la práctica se requiere una
-> `GOOGLE_API_KEY`. El soporte de OpenAI y otros proveedores está pendiente (ver los `TODO` del
-> archivo).
+> **Nota sobre el proveedor de IA:** el backend soporta **Google Gemini** y **OpenAI** mediante
+> `AI_PROVIDER=gemini` o `AI_PROVIDER=openai`. Para Gemini se requiere `GOOGLE_API_KEY`; para OpenAI,
+> `OPENAI_API_KEY`.
 
 ---
 
@@ -47,7 +45,7 @@ Monorepo gestionado con **pnpm workspaces** ([`pnpm-workspace.yaml`](pnpm-worksp
 
 - [Node.js](https://nodejs.org/) (versión LTS reciente).
 - [pnpm](https://pnpm.io/installation).
-- Una **API key propia de Google Gemini** (gratuita).
+- Una **API key propia de Google Gemini** o de **OpenAI**, según el proveedor elegido.
 
 ---
 
@@ -77,15 +75,25 @@ OPENAI_API_KEY=
 PORT=3001
 ```
 
+Para usar OpenAI, configurá:
+
+```env
+AI_PROVIDER=openai
+AI_MODEL=gpt-4o-mini
+OPENAI_API_KEY=tu_api_key_de_openai_aqui
+GOOGLE_API_KEY=
+PORT=3001
+```
+
 ### Variables de entorno
 
 | Variable | Descripción | Ejemplo |
 |---|---|---|
-| `AI_PROVIDER` | Proveedor de IA (operativo: `gemini`). | `gemini` |
+| `AI_PROVIDER` | Proveedor de IA (`gemini` u `openai`). | `gemini` |
 | `AI_MODEL` | Modelo a utilizar. | `gemini-2.5-flash` |
 | `AI_TEMPERATURE` | Temperatura del modelo. Recomendado `0` (determinista) por tratarse de tareas de cálculo. | `0` |
-| `GOOGLE_API_KEY` | API key de Google Gemini. **Requerida.** | `AIza...` |
-| `OPENAI_API_KEY` | API key de OpenAI (no requerida con Gemini). | |
+| `GOOGLE_API_KEY` | API key de Google Gemini. Requerida con `AI_PROVIDER=gemini`. | `AIza...` |
+| `OPENAI_API_KEY` | API key de OpenAI. Requerida con `AI_PROVIDER=openai`. | `sk-...` |
 | `PORT` | Puerto del backend. | `3001` |
 
 ---
