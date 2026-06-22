@@ -9,3 +9,14 @@ services:
       - ./backend/.env
     volumes:
       - ./model-context.md:/app/model-context.md:ro
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
